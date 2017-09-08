@@ -14,14 +14,15 @@
 # Author:
 #   BuJo
 #   cy4n
+#   Christian Koehler
 
 
-AUDIT_CHANNEL = process.env.AUDIT_CHANNEL or '#botlog'
+AUDIT_CHANNEL = process.env.AUDIT_CHANNEL
 
 module.exports = (robot) ->
   # log hubot commands, with issuer and chatroom
   robot.listenerMiddleware (context, next, done) ->
-    room = context.response.message.user.room
+    room = context.response.message.user.room_name
     issuer = context.response.message.user.name
     cmd = context.response.message.text
     switch room
