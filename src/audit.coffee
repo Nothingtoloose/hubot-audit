@@ -22,6 +22,8 @@ AUDIT_CHANNEL = process.env.AUDIT_CHANNEL
 module.exports = (robot) ->
   # log hubot commands, with issuer and chatroom
   robot.listenerMiddleware (context, next, done) ->
+    match = /^\@Hubot+/i.test(context.response.message.text) or /^\Hubot+/i.test(context.response.message.text)
+    
     room = context.response.message.user.room_name
     issuer = context.response.message.user.name
     cmd = context.response.message.text
@@ -30,8 +32,10 @@ module.exports = (robot) ->
         robot.logger.info "| listenerMiddleware: #{room}: <#{issuer}> #{cmd}"
       when AUDIT_CHANNEL # ignore AUDIT_CHANNEL to avoid recursion
       else
-        robot.messageRoom(AUDIT_CHANNEL, "#{room}: <#{issuer}> #{cmd}")
-
+        if match
+          robot.messageRoom(AUDIT_CHANNEL, "#{room}: <#{issuer}> #{cmd}")
+        else
+          
     next()
 
   # log hubot's answer for the command that hubot listened to earlier
