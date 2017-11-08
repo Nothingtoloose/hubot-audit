@@ -40,6 +40,8 @@ module.exports = (robot) ->
 
   # log hubot's answer for the command that hubot listened to earlier
   robot.responseMiddleware (context, next, done) ->
+    #match = /^\@Hubot+/i.test(context.response.message.text) or /^\Hubot+/i.test(context.response.message.text)
+    #if match 
     return unless context.plaintext?
     switch context.response.envelope.room
       when 'Shell' #for interactive testing
