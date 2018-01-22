@@ -24,7 +24,7 @@ module.exports = (robot) ->
   robot.listenerMiddleware (context, next, done) ->
     match = /^\@Hubot+/i.test(context.response.message.text) or /^\Hubot+/i.test(context.response.message.text)
     
-    room = context.response.message.user.room_name
+    room = context.response.message.user.room_name || 'Direkter Chat'
     issuer = context.response.message.user.name
     cmd = context.response.message.text
     switch room
@@ -40,15 +40,10 @@ module.exports = (robot) ->
 
   # log hubot's answer for the command that hubot listened to earlier
   robot.responseMiddleware (context, next, done) ->
-    #match = /^\@Hubot+/i.test(context.response.message.text) or /^\Hubot+/i.test(context.response.message.text)
-    #if match 
     return unless context.plaintext?
-    switch context.response.envelope.room
-      when 'Shell' #for interactive testing
-        robot.logger.info "| responseMiddleware:" + context.strings[0]
-      when AUDIT_CHANNEL # ignore AUDIT_CHANNEL to avoid recursion
-      else
-        robot.messageRoom(AUDIT_CHANNEL, s) for s in context.strings
+    if (context.response.envelope.room == AUDIT_CHANNEL) or (context.response.message.user.channel_type == 'D') or (context.response.message.user.channel_type == 'G')
+      #hier soll nichts geloggt werden
+    else
+      robot.messageRoom(AUDIT_CHANNEL, s) for s in context.strings
 
     next()
-
